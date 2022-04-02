@@ -1,0 +1,38 @@
+Previous Article
+                                               CONCLUSION
+BLAS
+The BLAS (Basic Linear Algebra Subprograms) routines provide standard building blocks for performing basic vector and matrix operations. The Level 1 BLAS perform scalar, vector, and vector-vector operations; the Level 2 BLAS perform matrix-vector operations; and the Level 3 BLAS perform matrix-matrix operations. Because the BLAS are efficient, portable, and widely available, they are commonly used in the development of high quality linear algebra software, such as LAPACK.
+
+Various versions of BLAS are installed on LC Linux clusters. Some versions are integrated into specific compiler systems.
+
+Intel MKL (associated with each MKL library version), e.g.:
+/usr/tce/package/mkl/mkl-2020.0/lib/libmkl_blas95_lp64.a
+
+PGI compilers (associated with each compiler version), e.g.,
+/usr/tce/packages/pgi/pgi-20.4/lib/libblas.a
+
+/usr/lib64/libblas.so (supplied by Red Hat as part of the regular RHEL distribution and only recommended when using the GNU compiler and when performance is not an issue, as it is not highly optimized
+There is a specific way to link for each version of BLAS (PGI, Intel/MKL, and RHEL). In the example below, "copy.f95" is a Fortran source file that references a BLAS Level 2 routine. .
+
+PGI
+In the following example, the 20.4 version of the PGI compiler is chosen, along with the related PGI BLAS.
+
+module load pgi/20.4
+
+pgf95 copy.f95 --L/usr/tce/packages/pgi/pgi-20.4/lib/ -lblas
+
+Intel
+The Intel MKL BLAS provide support for linking with PGI and GNU compilers, in addition to Intel. A very useful tool for building applications using Intel MKL is the Intel Math Kernel Library Link Line Advisor. In the example below, the default Intel compiler, MKL version 2020.0 are being used with dynamic linking, 32-bit integer support, and the BLAS95 Interface.
+
+module load intel
+
+setenv MKLROOT /usr/local/tools/mkl-11.0.0/ #csh
+
+export MKLROOT=/usr/local/tools/mkl-11.0.0/ #bash
+
+ifort copy.f95 -I$MKLROOT/include -I$MKLROOT/include/ -L$MKLROOT/lib -Wl,-rpath=$MKLROOT/lib $MKLROOT/lib/libmkl_blas95_lp64.a -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm
+
+RHEL GNU Compilers
+gfortran -lblas copy.f95
+
+Here we have successfully finished our BLAS library.
